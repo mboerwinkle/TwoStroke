@@ -1,7 +1,8 @@
 CC=g++
 CFLAGS=-Wall -Wno-strict-aliasing -O2 -c -ffast-math $(DEBUG)
 LFLAGS=-lSDL2 -lm -pthread -lrt
-SOURCES=main.cpp netListen.cpp
+SOURCES=main.cpp
+# netListen.cpp
 
 OBJECTS=$(SOURCES:.cpp=.o)
 
@@ -10,11 +11,11 @@ OBJECTS=$(SOURCES:.cpp=.o)
 run: $(OBJECTS)
 	$(CC) $(OBJECTS) $(DEBUG) -o run $(LFLAGS)
 
-main.o: main.cpp networking.h
+main.o: main.cpp
 	$(CC) $(CFLAGS) main.cpp
 
-netListen.o: netListen.cpp networking.h
-	$(CC) $(CFLAGS) netListen.cpp
+#netListen.o: netListen.cpp
+#	$(CC) $(CFLAGS) netListen.cpp
 
 clean:
 	rm -f *.o run

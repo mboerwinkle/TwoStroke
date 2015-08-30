@@ -34,7 +34,6 @@ void* netListen(void* whatever){
 			}
 		}
 		if(testClient >= clientCount){//first time seen
-			puts("success!");
 			if(msgSize <= 1 || *msg != 'I') continue; //I is for Init. or something
 			if(strnlen(msg, 100) > 99){
 				puts("message too long");
