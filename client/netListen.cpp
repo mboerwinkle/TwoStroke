@@ -1,51 +1,37 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "networking.h"
-int clientCount = 0;
-int maxClients = 5;
-client* clientList;
-void* netListen(void* whatever){
-	clientList = (client*)calloc(sizeof(client), maxClients);
-	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	if(sockfd < 0){
-		puts("network error");
-		return NULL;
+void netListen(){
+	static int8_t data[6000];
+	struct sockaddr_in addr;
+	socklen_t addrLen = sizeof(addr);
+	int len;
+	while(0<(len = recvfrom(sockfd, (char*)data, 6000, 0, (struct sockaddr*)&addr, &addrLen))){
+		addrLen = sizeof(addr);
+		if(addr.sin_addr.s_addr != serverAddr.sin_addr.s_addr) continue;
 	}
-	struct sockaddr_in bindAddr = {.sin_family=AF_INET, .sin_port=htons(1212), .sin_addr={.s_addr=htonl(INADDR_ANY)}};
-	if(0 > bind(sockfd, (struct sockaddr*)&bindAddr, sizeof(bindAddr))){
-		puts("network error");
-		return NULL;
-	}
-	char msg[100];//maximum message size
-	socklen_t len;
-	int msgSize;
-	while(1){
-		len = sizeof(bindAddr);
-		msgSize = recvfrom(sockfd, msg, 100, 0, (struct sockaddr*)&bindAddr, &len);
-		int testClient = 0;
-		while(testClient < clientCount){
-			if(clientList[testClient].addr.sin_addr.s_addr == bindAddr.sin_addr.s_addr){
-				//client is already in list
-				break;
-			}
-		}
-		if(testClient >= clientCount){//first time seen
-			if(msgSize <= 1 || *msg != 'I') continue; //I is for Init. or something
-			if(strnlen(msg, 100) > 99){
-				puts("message too long");
-				continue;
-			}
-			if(clientCount+1 > maxClients){
-				puts("too many clients trying to connect");
-				continue;
-			}
-			//initialize clientList[clientCount]
-			clientCount++;
-		}
-	}
-	return NULL;
 }
+int initNetwork(char* ip, int port){
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if(sockfd < 0){
+		puts("socket error");
+		return 1;
+	}
+	serverAddr.sin_family=AF_INET;
+	serverAddr.sin_addr.s_addr=htonl(INADDR_ANY);
+	serverAddr.sin_port=htons(port+1);
+	if(0 > bind(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr))){
+		puts("network error");
+		return 1;
+	}
+	fcntl(sockfd, F_SETFL, O_NONBLOCK);
+	serverAddr.sin_port = htons(port);
+	inet_aton(ip, &serverAddr.sin_addr);
+	return 0;
+}
+	

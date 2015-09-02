@@ -1,7 +1,7 @@
 typedef struct client{
 	struct sockaddr_in addr;
-	//entity* myEntity;
-	//keys
+	void* myEntity;
+	char keys;
 }client;
 extern client* clientList;
 extern int maxClients;
