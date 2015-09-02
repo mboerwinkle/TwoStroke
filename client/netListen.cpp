@@ -14,6 +14,7 @@ void netListen(){
 	while(0<(len = recvfrom(sockfd, (char*)data, 6000, 0, (struct sockaddr*)&addr, &addrLen))){
 		addrLen = sizeof(addr);
 		if(addr.sin_addr.s_addr != serverAddr.sin_addr.s_addr) continue;
+		if(*data == 'H') puts("received heartbeat");
 	}
 }
 int initNetwork(char* ip, int port){

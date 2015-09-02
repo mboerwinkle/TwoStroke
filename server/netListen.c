@@ -30,17 +30,16 @@ void* netListen(void* whatever){
 		int testClient = 0;
 		while(testClient < clientCount){
 			if(clientList[testClient].addr.sin_addr.s_addr == bindAddr.sin_addr.s_addr){
-				//client is already in list
+				if(*msg == 'R'){//Reply
+					struct sockaddr_in sendAddr = {.sin_family=AF_INET, .sin_port=htons(1213), .sin_addr={.s_addr=bindAddr.sin_addr.s_addr}};
+					sendto(sockfd, "H", 1, 0, (struct sockaddr*)&sendAddr, sizeof(sendAddr));
+				}else{//other things (chat, option screens, etc)
+				}
 				break;
 			}
 		}
 		if(testClient >= clientCount){//first time seen
-			puts("success!");
 			if(*msg != 'I') continue; //I is for Init. or something
-			if(strnlen(msg, 100) > 99){
-				puts("message too long");
-				continue;
-			}
 			if(clientCount+1 > maxClients){
 				puts("too many clients trying to connect");
 				continue;

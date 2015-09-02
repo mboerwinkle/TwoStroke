@@ -14,5 +14,6 @@ entity* makeNewEntity(double x, double y, double z){
 	memset(target->vel, 0, 3*sizeof(double));
 	target->mass = 1;
 	target->radius = 5;
+	entityCount++;
 	return target;
 }
