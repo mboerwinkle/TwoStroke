@@ -13,7 +13,7 @@ run: $(OBJECTS)
 main.o: main.c
 	$(CC) $(CFLAGS) main.c
 
-netListen.o: netListen.cpp networking.h
+netListen.o: netListen.c networking.h
 	$(CC) $(CFLAGS) netListen.c
 
 vector.o: vector.c vector.h matrixFuncs.h

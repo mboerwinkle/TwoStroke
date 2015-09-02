@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "networking.h"
+#include "entity.h"
 int clientCount = 0;
 int maxClients = 5;
 client* clientList;
@@ -35,7 +36,7 @@ void* netListen(void* whatever){
 		}
 		if(testClient >= clientCount){//first time seen
 			puts("success!");
-			if(msgSize <= 1 || *msg != 'I') continue; //I is for Init. or something
+			if(*msg != 'I') continue; //I is for Init. or something
 			if(strnlen(msg, 100) > 99){
 				puts("message too long");
 				continue;
@@ -44,7 +45,10 @@ void* netListen(void* whatever){
 				puts("too many clients trying to connect");
 				continue;
 			}
-			//initialize clientList[clientCount]
+			//make new client
+			clientList[clientCount].myEntity = makeNewEntity(0, 0, 0);
+			clientList[clientCount].addr.sin_addr.s_addr = bindAddr.sin_addr.s_addr;
+			puts("adding client");
 			clientCount++;
 		}
 	}

@@ -1,6 +1,7 @@
+#include "entity.h"
 typedef struct client{
 	struct sockaddr_in addr;
-	void* myEntity;
+	entity* myEntity;
 	char keys;
 }client;
 extern client* clientList;

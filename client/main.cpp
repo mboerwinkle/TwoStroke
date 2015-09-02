@@ -11,7 +11,7 @@ SDL_Renderer* render;
 int running = 1;
 int sockfd;
 struct sockaddr_in serverAddr;
-int main(int argc, char** argv){//Server
+int main(int argc, char** argv){
 	if(argc < 2){
 		puts("Please specify an ip.");
 		return 5;
@@ -26,12 +26,12 @@ int main(int argc, char** argv){//Server
 	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	initNetwork(argv[1], 1212);
 	char test[5];
-	strcpy(test, "hi");
+	strcpy(test, "I");
 	sendto(sockfd, test, 4, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-	while(running){
-		netListen();
+//	while(running){
+//		netListen();
 
-	}
+//	}
 	SDL_DestroyRenderer(render);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
