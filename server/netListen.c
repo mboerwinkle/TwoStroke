@@ -9,6 +9,7 @@
 int clientCount = 0;
 int maxClients = 5;
 client* clientList;
+unsigned char twoPow[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
 void* netListen(void* whatever){
 	clientList = (client*)calloc(sizeof(client), maxClients);
 	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -21,16 +22,22 @@ void* netListen(void* whatever){
 		puts("network error");
 		return NULL;
 	}
-	char msg[100];//maximum message size
+	char msg[10];//maximum message size
 	socklen_t len;
 	int msgSize;
 	while(1){
 		len = sizeof(bindAddr);
-		msgSize = recvfrom(sockfd, msg, 100, 0, (struct sockaddr*)&bindAddr, &len);
+		msgSize = recvfrom(sockfd, msg, 10, 0, (struct sockaddr*)&bindAddr, &len);
 		int testClient = 0;
 		while(testClient < clientCount){
 			if(clientList[testClient].addr.sin_addr.s_addr == bindAddr.sin_addr.s_addr){
-				if(*msg == 'R'){//Reply
+				if(*msg == 1){//move forward, back, left, right, jump, crouch
+					if(msg[1]&twoPow[0]) puts("moved forward");
+					if(msg[1]&twoPow[1]) puts("moved backward");
+				}
+				//if(*msg == '2'){//fire
+					 
+				if(*msg == 0){//Reply
 					struct sockaddr_in sendAddr = {.sin_family=AF_INET, .sin_port=htons(1213), .sin_addr={.s_addr=bindAddr.sin_addr.s_addr}};
 					sendto(sockfd, "H", 1, 0, (struct sockaddr*)&sendAddr, sizeof(sendAddr));
 				}else{//other things (chat, option screens, etc)
@@ -39,7 +46,7 @@ void* netListen(void* whatever){
 			}
 		}
 		if(testClient >= clientCount){//first time seen
-			if(*msg != 'I') continue; //I is for Init. or something
+			if(*msg != 0) continue; //I is for Init. or something
 			if(clientCount+1 > maxClients){
 				puts("too many clients trying to connect");
 				continue;

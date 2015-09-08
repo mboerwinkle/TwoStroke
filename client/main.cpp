@@ -12,6 +12,7 @@ SDL_Renderer* render;
 int running = 1;
 int sockfd;
 struct sockaddr_in serverAddr;
+unsigned char twoPow[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
 int main(int argc, char** argv){
 	struct timespec t = {.tv_sec=0};
 	struct timespec lastTime = {.tv_sec = 0, .tv_nsec = 0};
@@ -31,10 +32,13 @@ int main(int argc, char** argv){
 	}
 	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	initNetwork(argv[1], 1212);
-	char test[5];
-	strcpy(test, "I");
-	sendto(sockfd, test, 4, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-	sendto(sockfd, "R", 4, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+	char test[10];
+	test[0] = 0;
+	sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+	sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+	test[0] = 1;
+	test[1] = twoPow[0];
+	sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	while(running){
 		netListen();
 		while(SDL_PollEvent(&evnt)){

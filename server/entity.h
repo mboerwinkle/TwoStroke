@@ -7,7 +7,7 @@ typedef struct entity{
 	double testvel[3];
 	double mass;
 	double radius;
-	
+	int keys;
 }entity;
 extern entity* entityList;
 extern int entityCount;
