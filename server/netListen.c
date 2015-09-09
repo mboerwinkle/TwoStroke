@@ -31,9 +31,9 @@ void* netListen(void* whatever){
 		int testClient = 0;
 		while(testClient < clientCount){
 			if(clientList[testClient].addr.sin_addr.s_addr == bindAddr.sin_addr.s_addr){
-				if(*msg == 1){//move forward, back, left, right, jump, crouch
-					if(msg[1]&twoPow[0]) puts("moved forward");
-					if(msg[1]&twoPow[1]) puts("moved backward");
+				if(*msg == 1){//move forward, back, left, right, jump
+					clientList[testClient].myEntity->keys = msg[1];
+					puts("key recieved");
 				}
 				//if(*msg == '2'){//fire
 					 

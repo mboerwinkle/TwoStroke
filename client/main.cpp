@@ -13,6 +13,19 @@ int running = 1;
 int sockfd;
 struct sockaddr_in serverAddr;
 unsigned char twoPow[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+unsigned char keys = 0;
+#define NUMKEYS 5
+int keyBindings[NUMKEYS] = {SDLK_w, SDLK_s, SDLK_a, SDLK_d, SDLK_SPACE};
+unsigned char keyAction(int bit, char pressed){
+	int i = 0;
+	for(; i < NUMKEYS && bit !=keyBindings[i]; i++);
+	if(i==NUMKEYS) return 1;
+	unsigned char old = keys;
+	if(pressed) keys |= twoPow[i];
+	else keys &= 0xFF-twoPow[i];
+	if(keys == old) return 1;
+	return 0;
+}
 int main(int argc, char** argv){
 	struct timespec t = {.tv_sec=0};
 	struct timespec lastTime = {.tv_sec = 0, .tv_nsec = 0};
@@ -36,13 +49,20 @@ int main(int argc, char** argv){
 	test[0] = 0;
 	sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-	test[0] = 1;
-	test[1] = twoPow[0];
-	sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	while(running){
 		netListen();
 		while(SDL_PollEvent(&evnt)){
-			if(evnt.type == SDL_QUIT){
+			if(evnt.type == SDL_KEYDOWN){
+				if(!keyAction(evnt.key.keysym.sym, 1)){
+					test[0] = 1;
+					sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+				}
+			}else if(evnt.type == SDL_KEYUP){
+				if(!keyAction(evnt.key.keysym.sym, 0)){
+					test[0] = 1;
+					sendto(sockfd, test, 10, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+				}
+			}else if(evnt.type == SDL_QUIT){
 				running = 0;
 			}
 		}
