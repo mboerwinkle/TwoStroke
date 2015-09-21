@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -Wno-strict-aliasing -O2 -c -ffast-math $(DEBUG)
 LFLAGS=-lSDL2 -lm -pthread -lrt
-SOURCES=main.c netListen.c vector.c entity.c 
+SOURCES=main.c netListen.c vector.c entity.c mesh.c 
 
 OBJECTS=$(SOURCES:.c=.o)
 
@@ -10,7 +10,7 @@ OBJECTS=$(SOURCES:.c=.o)
 run: $(OBJECTS)
 	$(CC) $(OBJECTS) $(DEBUG) -o run $(LFLAGS)
 
-main.o: main.c
+main.o: main.c entity.h networking.h mesh.h
 	$(CC) $(CFLAGS) main.c
 
 netListen.o: netListen.c networking.h
@@ -21,6 +21,9 @@ vector.o: vector.c vector.h matrixFuncs.h
 
 entity.o: entity.c entity.h
 	$(CC) $(CFLAGS) entity.c
+
+mesh.o: mesh.c mesh.h geo3d.h
+	$(CC) $(CFLAGS) mesh.c
 
 clean:
 	rm -f *.o run

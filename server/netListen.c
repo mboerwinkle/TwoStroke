@@ -24,10 +24,10 @@ void* netListen(void* whatever){
 	}
 	char msg[10];//maximum message size
 	socklen_t len;
-	int msgSize;
+//	int msgSize;
 	while(1){
 		len = sizeof(bindAddr);
-		msgSize = recvfrom(sockfd, msg, 10, 0, (struct sockaddr*)&bindAddr, &len);
+		/*msgSize = */recvfrom(sockfd, msg, 10, 0, (struct sockaddr*)&bindAddr, &len);
 		int testClient = 0;
 		while(testClient < clientCount){
 			if(clientList[testClient].addr.sin_addr.s_addr == bindAddr.sin_addr.s_addr){
@@ -37,10 +37,10 @@ void* netListen(void* whatever){
 				}
 				//if(*msg == '2'){//fire
 					 
-				if(*msg == 0){//Reply
+				else if(*msg == 0){//Reply
 					struct sockaddr_in sendAddr = {.sin_family=AF_INET, .sin_port=htons(1213), .sin_addr={.s_addr=bindAddr.sin_addr.s_addr}};
 					sendto(sockfd, "H", 1, 0, (struct sockaddr*)&sendAddr, sizeof(sendAddr));
-				}else{//other things (chat, option screens, etc)
+//				}else if(*msg == 3){//create Mesh
 				}
 				break;
 			}
