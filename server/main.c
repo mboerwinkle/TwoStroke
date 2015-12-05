@@ -25,7 +25,6 @@ int main(){//Server
 	struct timespec lastTime = {.tv_sec = 0, .tv_nsec = 0};
 	struct timespec otherTime = {.tv_sec = 0, .tv_nsec = 0};
 	while(1){
-	//	addMesh(
 		clock_gettime(CLOCK_MONOTONIC, &otherTime);
 		int32_t sleep = (int32_t)(1000000000/40) - (otherTime.tv_nsec-lastTime.tv_nsec) - 1000000001*(otherTime.tv_sec-lastTime.tv_sec);
 		if(sleep > 0){

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "globals.h"
+#include "mesh.h"
 void loadmesh(char name[20], mesh *final, double centerx, double centery, double centerz){
 	memset(final, 0, sizeof(mesh));
 	final->center = calloc(sizeof(double), 3);
@@ -16,7 +16,6 @@ void loadmesh(char name[20], mesh *final, double centerx, double centery, double
 	final->moves = 1;
 	final->mass = 1;
 	FILE *fp;
-//	sprintf(name, "meshes/%s", name);
 	fp = fopen(name, "r");
 	if(fp == NULL) printf("error opening %s\n", name);
 	int temp, corner, one, two, run = 1;
